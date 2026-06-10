@@ -189,6 +189,8 @@ impl Gen6Reader {
 
     pub fn party_pkm(&self, slot: u32) -> Pk6 {
         let offset = (slot * 484) + self.addrs.party;
+        let species: u16 = pnp::read(offset + 0x08);
+        pnp::println!("SPECIES={}", species);
         self.read_pk6(offset)
     }
 
