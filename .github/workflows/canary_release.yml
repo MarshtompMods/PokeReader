@@ -1,40 +1,25 @@
-name: Draft release
+name: Build PokeReader
 
 on:
-push:
-branches:
-- main
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-canary-release:
-name: Canary release
-runs-on: ubuntu-latest
-container: zaksabeast/devkitarm-rust
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: zaksabeast/devkitarm-rust
 
-```
-steps:
-  - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-  - name: Build
-    run: make
+      - name: Build
+        run: make
 
-  - name: Set build timestamp
-    id: build_timestamp
-    run: |
-      echo "build_timestamp=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
-
-  - name: Set tag name
-    id: tag_name
-    run: |
-      echo "tag_name=canary-$(date +'%Y-%m-%d-%H-%M')" >> $GITHUB_OUTPUT
-
-  - name: Publish canary release
-    uses: softprops/action-gh-release@v2
-    with:
-      draft: false
-      prerelease: true
-      tag_name: ${{ steps.tag_name.outputs.tag_name }}
-      name: Canary ${{ steps.build_timestamp.outputs.build_timestamp }}
-      body: ${{ github.event.head_commit.message }}
-      files: out/default.3gx
-```
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PokeReader
+          path: out/default.3gx
